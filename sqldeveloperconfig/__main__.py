@@ -6,7 +6,7 @@ Examples:
   python3 -m sqldeveloperconfig auto --help
   python3 -m sqldeveloperconfig manual --help
   python3 -m sqldeveloperconfig add_connection --help
-  python3 -m sqldeveloperconfig set_password --help
+  python3 -m sqldeveloperconfig set_passwords --help
 
   # Automatic file mode, show all connections and passwords on command line
   python3 -m sqldeveloperconfig auto
@@ -23,7 +23,7 @@ Examples:
   python3 -m sqldeveloperconfig add_connection --json-files interactive_connection.json
 
   # Set passwords matching regex
-  python3 -m sqldeveloperconfig set_password \\
+  python3 -m sqldeveloperconfig set_passwords \\
     --host-regex '^.*localhost.*$' \\
     --user-regex 'system' \\
     --password 'oracle'
