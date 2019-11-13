@@ -1,0 +1,20 @@
+{
+  "hostname": "localhost",
+  "customUrl": "jdbc:oracle:thin:@localhost:1521:xe",
+  "sid": "xe",
+  "port": "1521",
+  "user": "system",
+  "plaintext_password": "oracle",
+  "SavePassword": "true",
+  "folder": "local",
+  "role": null,
+  "OracleConnectionType": "BASIC",
+  "RaptorConnectionType": "Oracle",
+  "oraDriverType": "thin",
+  "NoPasswordConnection": "TRUE",
+  "driver": "oracle.jdbc.OracleDriver",
+  "subtype": "oraJDBC",
+  "OS_AUTHENTICATION": "false",
+  "KERBEROS_AUTHENTICATION": "false",
+  "ConnName": "[99 localhost] system"
+}
