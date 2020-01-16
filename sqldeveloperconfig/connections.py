@@ -90,6 +90,7 @@ class Connection:
             self._attrs["password"] = new_value.decode("utf8")
         else:
             self._attrs["password"] = new_value
+        self._attrs["SavePassword"] = "true"
 
     @property
     def plaintext_password(self):
