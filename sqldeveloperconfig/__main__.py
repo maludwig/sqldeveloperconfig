@@ -161,7 +161,7 @@ def parse_args():
         epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    subparsers = main_parser.add_subparsers(help="Module", dest="module")
+    subparsers = main_parser.add_subparsers(help="Module", dest="module", required=True)
 
     manual_show_desc = "Decrypt one specific password"
     manual_parser = subparsers.add_parser("manual_show", aliases=["manual"], help=manual_show_desc, description=manual_show_desc)
