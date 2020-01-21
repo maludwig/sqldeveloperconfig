@@ -39,7 +39,7 @@ def find_all_connection_paths():
     Finds every connections.xml file path
     """
     sql_pref_path = join(str(Path.home()), ".sqldeveloper")
-    connections_paths = glob.glob(sql_pref_path + "/system*/o.jdeveloper.db.connection.*/connections.xml")
+    connections_paths = glob.glob(sql_pref_path + "/system*/o.jdeveloper.db.connection*/connections.xml")
     return connections_paths
 
 
@@ -48,11 +48,14 @@ def find_connections_path(pref_path):
     Given a preferences.xml path, returns the path to connections.xml
     """
     system_dir = dirname(dirname(pref_path))
-    all_connections_paths = glob.glob(system_dir + "/o.jdeveloper.db.connection.*/connections.xml")
+    all_connections_paths = glob.glob(system_dir + "/o.jdeveloper.db.connection*/connections.xml")
     if len(all_connections_paths) == 1:
         return all_connections_paths[0]
     else:
-        raise Exception("Multiple connections files found")
+        if len(all_connections_paths) == 0:
+            raise Exception("No connections files found")
+        else:
+            raise Exception("Multiple connections files found")
 
 
 def ask_yes_no(prompt, default="", input_fn=input) -> bool:

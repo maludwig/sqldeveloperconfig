@@ -17,7 +17,7 @@ class TestPreferences(unittest.TestCase):
         all_pref_paths = find_all_pref_paths()
         preferences = ProductPreferences(all_pref_paths[0])
         db_system_id = preferences.db_system_id
-        self.assertRegexpMatches(db_system_id, r"^[a-f0-9]*-[a-f0-9]*-[a-f0-9]*-[a-f0-9]*-[a-f0-9]*$")
+        self.assertRegex(db_system_id, r"^[a-f0-9]*-[a-f0-9]*-[a-f0-9]*-[a-f0-9]*-[a-f0-9]*$")
 
 
 if __name__ == "__main__":

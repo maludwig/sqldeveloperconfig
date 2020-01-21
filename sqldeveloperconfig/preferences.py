@@ -31,11 +31,14 @@ def update_all_connection_dirs_xml(prefs_root, connection_dirs):
 
 def find_pref_path(conn_path):
     system_dir = dirname(dirname(conn_path))
-    all_prefs_paths = glob.glob(system_dir + "/o.sqldeveloper.[0-9]*/product-preferences.xml")
+    all_prefs_paths = glob.glob(system_dir + "/o.sqldeveloper*/product-preferences.xml")
     if len(all_prefs_paths) == 1:
         return all_prefs_paths[0]
     else:
-        raise Exception("Multiple connections files found")
+        if len(all_prefs_paths) == 0:
+            raise Exception("No product-preferences files found")
+        else:
+            raise Exception("Multiple product-preferences files found")
 
 
 def find_db_system_id(root):
@@ -109,5 +112,5 @@ class ProductPreferences:
 
 def find_all_pref_paths():
     sql_pref_path = join(str(Path.home()), ".sqldeveloper")
-    prefs_paths = glob.glob(sql_pref_path + "/system*/o.sqldeveloper.[0-9]*/product-preferences.xml")
+    prefs_paths = glob.glob(sql_pref_path + "/system*/o.sqldeveloper*/product-preferences.xml")
     return prefs_paths

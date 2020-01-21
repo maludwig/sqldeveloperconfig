@@ -53,3 +53,11 @@ python3 -m sqldeveloperconfig set_password \\
   --user-regex 'system' \\
   --password 'oracle'
 ```
+
+### Contributing
+
+To run the tests, use:
+
+```bash
+python3 -m unittest discover --pattern '*test.py' --verbose .
+```
