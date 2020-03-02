@@ -69,7 +69,7 @@ def mod_set_passwords(args):
                     if re.search(args.host_regex, conn.host):
                         all_names.append(conn.name)
                         conn.plaintext_password = args.password
-        connections.save_xml(connections_path)
+        connections.save_connections_and_folders(connections_path)
     return all_names
 
 
@@ -125,7 +125,7 @@ def mod_add_connection(args):
                 connections = Connections(connections_path)
                 connection = Connection(prod_pref.db_system_id, **attrs)
                 connections.add_connection(connection)
-                connections.save_xml(connections_path)
+                connections.save_connections_and_folders(connections_path)
     else:
         if args.json_files:
             for json_path in args.json_files:
@@ -141,7 +141,10 @@ def mod_add_connection(args):
                 else:
                     connection_attrs_list.append(conn_attrs_or_list)
             all_conn_files = OrderedDict()
-            for connections_path in find_all_connection_paths():
+            all_connections_paths = find_all_connection_paths()
+            if len(all_connections_paths) == 0:
+                raise Exception("Connections path not found, please make at lease one connection in SQLDeveloper")
+            for connections_path in all_connections_paths:
                 pref_path = find_pref_path(connections_path)
                 db_system_id = read_db_system_id(pref_path)
                 connections = Connections(connections_path)
@@ -149,7 +152,7 @@ def mod_add_connection(args):
                     connection = Connection(db_system_id, **conn_attrs)
                     connections.add_connection(connection)
                 all_conn_files[connections_path] = connections.to_json()
-                connections.save_xml(connections_path)
+                connections.save_connections_and_folders(connections_path)
             return all_conn_files
 
 
@@ -161,7 +164,7 @@ def parse_args():
         epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    subparsers = main_parser.add_subparsers(help="Module", dest="module", required=True)
+    subparsers = main_parser.add_subparsers(help="Module", dest="module")
 
     manual_show_desc = "Decrypt one specific password"
     manual_parser = subparsers.add_parser("manual_show", aliases=["manual"], help=manual_show_desc, description=manual_show_desc)

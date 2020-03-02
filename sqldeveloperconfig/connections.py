@@ -2,14 +2,19 @@
 """
 Represents the connections.xml file
 """
+
 import xml.etree.ElementTree as ET
 from collections import OrderedDict, defaultdict
+from os import makedirs
+from os.path import isfile, isdir, dirname
 from typing import ItemsView
 
 from sqldeveloperconfig.constants import XML_DOCTYPE, DEFAULT_CONN_ATTRS
 from sqldeveloperconfig.cryption import decrypt_v4, encrypt_v4
 from sqldeveloperconfig.preferences import find_pref_path, ProductPreferences
 from sqldeveloperconfig.util import to_pretty_xml
+
+NO_CONNECTIONS_FILE_FOUND_ERROR_MSG = "No connections file found. Please launch SQLDeveloper before running this script for the first time."
 
 
 def make_attr_xml(attr_name, attr_val):
@@ -145,6 +150,8 @@ class Connections:
         self.prod_prefs = ProductPreferences(pref_path)
         db_system_id = self.prod_prefs.db_system_id
 
+        if not isfile(connections_file_path):
+            self.save_connections(connections_file_path)
         self.tree = ET.parse(connections_file_path)
         self.root = self.tree.getroot()
         for ref_entry in self.root.findall("./Reference"):
@@ -195,10 +202,13 @@ class Connections:
         self.prod_prefs.update_all_connection_dirs(connection_dirs)
         self.prod_prefs.save_xml()
 
-    def save_xml(self, connections_path):
+    def save_connections(self, connections_path):
         pretty_xml = self.to_xml_doc()
         with open(connections_path, "w") as redone_file:
             redone_file.write(pretty_xml)
+
+    def save_connections_and_folders(self, connections_path):
+        self.save_connections(connections_path)
         self.save_folders()
 
     @classmethod

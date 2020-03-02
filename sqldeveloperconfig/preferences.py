@@ -4,12 +4,28 @@ Represents the product-preferences.xml file
 """
 import glob
 from collections import OrderedDict
-from os.path import dirname, join
+from os.path import dirname, join, isfile
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
 from sqldeveloperconfig.constants import XML_DOCTYPE
 from sqldeveloperconfig.util import to_pretty_xml
+
+
+def find_ide_connections_elem(prefs_root):
+    dfc_elem = prefs_root.find(".//hash[@n='DatabaseFoldersCache']")
+    if not dfc_elem:
+        dfc_elem = ET.Element("hash", attrib={"n": "DatabaseFoldersCache"})
+        prefs_root.append(dfc_elem)
+    folders_elem = dfc_elem.find("./hash[@n='Folders']")
+    if not folders_elem:
+        folders_elem = ET.Element("hash", attrib={"n": "Folders"})
+        dfc_elem.append(folders_elem)
+    ide_connections_elem = folders_elem.find("./hash[@n='IdeConnections']")
+    if not ide_connections_elem:
+        ide_connections_elem = ET.Element("hash", attrib={"n": "IdeConnections"})
+        folders_elem.append(ide_connections_elem)
+    return ide_connections_elem
 
 
 def make_connection_dir_xml(dir_name, connection_names):
@@ -20,7 +36,7 @@ def make_connection_dir_xml(dir_name, connection_names):
 
 
 def update_all_connection_dirs_xml(prefs_root, connection_dirs):
-    ide_conns_elem = prefs_root.find(".//hash[@n='DatabaseFoldersCache']/hash[@n='Folders']/hash[@n='IdeConnections']")
+    ide_conns_elem = find_ide_connections_elem(prefs_root)
     for new_dir_name, new_connection_names in connection_dirs.items():
         dir_elem = ide_conns_elem.find("./list[@n='{}']".format(new_dir_name))
         if dir_elem is not None:
@@ -59,6 +75,8 @@ def read_db_system_id(pref_path):
 
 class ProductPreferences:
     def __init__(self, file_path):
+        if not isfile(file_path):
+            raise Exception("Could not find product preferences file, you must open SQLDeveloper at least once before running this script")
         self.file_path = file_path
         self.tree = ET.parse(self.file_path)
         self.root = self.tree.getroot()
@@ -68,7 +86,7 @@ class ProductPreferences:
         return find_db_system_id(self.root)
 
     def update_all_connection_dirs(self, connection_dirs):
-        ide_conns_elem = self.root.find(".//hash[@n='DatabaseFoldersCache']/hash[@n='Folders']/hash[@n='IdeConnections']")
+        ide_conns_elem = find_ide_connections_elem(self.root)
         for new_dir_name, new_connection_names in connection_dirs.items():
             dir_elem = ide_conns_elem.find("./list[@n='{}']".format(new_dir_name))
             if dir_elem is not None:
@@ -77,7 +95,7 @@ class ProductPreferences:
             ide_conns_elem.append(new_dir_elem)
 
     def load_all_connection_dirs(self):
-        ide_conns_elem = self.root.find(".//hash[@n='DatabaseFoldersCache']/hash[@n='Folders']/hash[@n='IdeConnections']")
+        ide_conns_elem = find_ide_connections_elem(self.root)
         connection_dirs = OrderedDict()
         for dir_elem in ide_conns_elem.findall("./list"):
             connection_names = []

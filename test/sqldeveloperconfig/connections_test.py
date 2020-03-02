@@ -28,14 +28,14 @@ class TestConnections(unittest.TestCase):
             connections = Connections.from_connections_file_path(conn_path)
             connection = Connection(DB_SYSTEM_ID, ConnName="test connection name", host=FAKE_HOSTNAME, plaintext_password=FAKE_PASSWORD)
             connections.add_connection(connection)
-            connections.save_xml(conn_path)
+            connections.save_connections_and_folders(conn_path)
             with open(conn_path) as conn_file:
                 conn_content = conn_file.read()
                 clean_content = re.sub(r"\n[\t ]*", "\n", conn_content)
                 clean_host_entry = re.sub(r"\n[\t ]*", "\n", EXPECTED_HOST_ENTRY)
                 self.assertTrue(clean_host_entry in clean_content)
             connections.pop_connection(connection.name)
-            connections.save_xml(conn_path)
+            connections.save_connections_and_folders(conn_path)
             with open(conn_path) as conn_file:
                 conn_content = conn_file.read()
                 clean_content = re.sub(r"\n[\t ]*", "\n", conn_content)
